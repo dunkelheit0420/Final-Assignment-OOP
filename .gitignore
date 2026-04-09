@@ -1,0 +1,17 @@
+# Visual Studio cache/options directory
+.vs/
+
+# Build output
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+x64/
+x86/
+Debug/
+Release/
+
+# Compiled files
+*.o
+*.out
