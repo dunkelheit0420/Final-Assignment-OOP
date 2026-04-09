@@ -20,12 +20,12 @@ protected:
 public:
     Person();
     Person(const std::string&, const std:: string&, gender);
-    virtual ~Person();
+    virtual ~Person() = 0;
     virtual void display() const;
-    virtual std::string name() const;
+    virtual std::string name() const = 0;
 };
 
-class Course;
+class Course; //declared below
 
 class Student : public Person {
 private:
