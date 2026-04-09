@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+const int COURSE_SIZE = 6;
+
 enum gender {
     male, 
     female, 
