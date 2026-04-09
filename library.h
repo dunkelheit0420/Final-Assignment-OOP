@@ -17,7 +17,7 @@ protected:
     gender gender_;
 public:
     Person();
-    Person(std::string, std:: string, gender);
+    Person(const std::string&, const std:: string&, gender);
     virtual ~Person();
     virtual void display() const;
     virtual std::string name() const;
@@ -31,7 +31,7 @@ private:
     double gpa_;
 public:
     Student();
-    Student(std::string, std::string, gender, double);
+    Student(const std::string&, const std::string&, gender, double);
     Student(const Student&);
     ~Student();
     void display() const override;
@@ -46,6 +46,12 @@ private:
     std::vector<Student*> students_;
 public:
     Course();
+    Course(const std::string&, const std::string&);
+    ~Course();
+    void display();
+    std::string code();
+    void add_student(const Student&);
+    
 };
 
 #endif
