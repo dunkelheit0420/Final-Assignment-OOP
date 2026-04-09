@@ -51,7 +51,11 @@ public:
     void display();
     std::string code();
     void add_student(const Student&);
-    
+    void display_students();
+};
+
+class Program {
+
 };
 
 #endif
