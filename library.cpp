@@ -47,7 +47,7 @@ void Student::display() const {
 }
 
 std::string Student::name() const{
-    Person::name();
+    return Person::name();
 }
 
 void Student::add_course(Course& course){
