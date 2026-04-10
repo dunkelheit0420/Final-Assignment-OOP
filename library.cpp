@@ -219,8 +219,8 @@ void Program::load_from_file(const std::string& filename) {
             std::string courseCode;
             int numCourses = std::stoi(numCoursesStr);
             for(int j = 0; j < numCourses; j++) {
-                if (j < numCourses - 1) {
-                    std::getline(ss, courseCode, ',');
+                if (j == numCourses - 1) {
+                    std::getline(ss, courseCode);
                 } else {
                     std::getline(ss, courseCode, ',');
                 }
@@ -231,9 +231,9 @@ void Program::load_from_file(const std::string& filename) {
                     }
                 }
             }
-
         }
         infile.close();
+        owns_memory_ = true;
     }
     catch (const std::string& error) {
         std::cerr << error << std::endl;
