@@ -28,6 +28,7 @@ public:
 class Course; //declared below
 
 class Student : public Person {
+    friend class Program;
 private:
     std::vector<Course*> courses_;
     double gpa_;
@@ -38,10 +39,11 @@ public:
     ~Student();
     void display() const override;
     std::string name() const override;
-    void add_course(const Course&);
+    void add_course(Course&);
 };
 
 class Course {
+    friend class Program;
 private:
     std::string course_name_;
     std::string course_code_;
@@ -52,15 +54,15 @@ public:
     ~Course();
     void display() const;
     std::string code() const;
-    void add_student(const Student&);
+    void add_student(Student&);
     void display_students() const;
 };
 
 class Program {
 private:
-    std::string program_name;
-    std::vector<Student*> students;
-    std::vector<Course*> courses;
+    std::string program_name_;
+    std::vector<Student*> students_;
+    std::vector<Course*> courses_;
 public:
     Program(const std::string& name);
     void add_student(Student& student);
