@@ -50,14 +50,25 @@ public:
     Course();
     Course(const std::string&, const std::string&);
     ~Course();
-    void display();
-    std::string code();
+    void display() const;
+    std::string code() const;
     void add_student(const Student&);
-    void display_students();
+    void display_students() const;
 };
 
 class Program {
-
+private:
+    std::string program_name;
+    std::vector<Student*> students;
+    std::vector<Course*> courses;
+public:
+    Program(const std::string& name);
+    void add_student(Student& student);
+    void add_course(Course& course);
+    void honours_list() const; // names of all students
+    void save_to_file(const std::string& filename) const; // courses + students
+    void load_from_file(const std::string& filename);
+    ~Program();
 };
 
 #endif
