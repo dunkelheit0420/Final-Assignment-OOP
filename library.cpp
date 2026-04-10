@@ -22,6 +22,7 @@ std::string Person::name() const {
     return full_name_;
 }
 
+//Helper function to output the gender string
 std::string genderToStr(gender g){
     if(g == male) return "male";
     if(g == female) return "female";
@@ -46,7 +47,7 @@ void Student::display() const {
 }
 
 std::string Student::name() const{
-    return full_name_;
+    Person::name();
 }
 
 void Student::add_course(Course& course){
@@ -111,7 +112,7 @@ void Course::display_students() const {
 
 
 //Program class functions implementation
-Program::Program(const std::string& name) : program_name_(name) {}
+Program::Program(const std::string& name) : program_name_(name), owns_memory_(false) {}
 
 void Program::add_student(Student& student) {
     students_.push_back(&student);
@@ -149,7 +150,6 @@ void Program::save_to_file(const std::string& filename) const {
         }
 
         outfile << program_name_ << std::endl;
-
         outfile << courses_.size() << std::endl;
 
         for (const Course* c : courses_) {
@@ -158,19 +158,17 @@ void Program::save_to_file(const std::string& filename) const {
 
         outfile << students_.size() << std::endl;
         for (const Student* s : students_) {
-            outfile << s->full_name_ << "," << s->birthday_ << "," << s->gender_ << "," << s->gpa_;
+            outfile << s->full_name_ << "," << s->birthday_ << "," << s->gender_ << "," << s->gpa_ << "," << s->courses_.size();
             for(int i = 0; i < s->courses_.size(); i++) {
                 outfile << "," << s->courses_[i]->code();
             }
+            outfile << "\n";
         }
-
         outfile.close();
     }
-
     catch (const std::string& error) {
         std::cerr << error << std::endl;
     }
-    
 }
 
 void Program::load_from_file(const std::string& filename) {
@@ -196,7 +194,7 @@ void Program::load_from_file(const std::string& filename) {
             std::getline(ss, c_name);
 
             Course* c = new Course(c_name, c_code);
-            courses_.push_back(c);
+            add_course(*c);
         }
 
         std::getline(infile, line);
@@ -205,29 +203,48 @@ void Program::load_from_file(const std::string& filename) {
         for (int i = 0; i < num_students; i++) {
             std::getline(infile, line);
             std::stringstream ss(line);
-            std::string fullName, birthday, genderStr, gpaStr;
+            std::string fullName, birthday, genderStr, gpaStr, numCoursesStr;
 
             std::getline(ss, fullName, ',');
             std::getline(ss, birthday, ',');
             std::getline(ss, genderStr, ',');
             std::getline(ss, gpaStr, ',');
-            gender s_gender = static_cast<gender>(std::stoi(genderStr));
+            gender genderEnum = static_cast<gender>(std::stoi(genderStr));
             double gpa = std::stod(gpaStr);
 
-            Student* s = new Student(fullName, birthday, s_gender, gpa);
-            students_.push_back(s);
-        }
+            Student* s = new Student(fullName, birthday, genderEnum, gpa);
+            add_student(*s);
 
+            std::getline(ss, numCoursesStr, ',');
+            std::string courseCode;
+            int numCourses = std::stoi(numCoursesStr);
+            for(int j = 0; j < numCourses; j++) {
+                if (j < numCourses - 1) {
+                    std::getline(ss, courseCode, ',');
+                } else {
+                    std::getline(ss, courseCode, ',');
+                }
+
+                for(Course* c : courses_) {
+                    if(c->code() == courseCode) {
+                        s->add_course(*c);
+                    }
+                }
+            }
+
+        }
         infile.close();
     }
-
     catch (const std::string& error) {
         std::cerr << error << std::endl;
     }
 }
 
 Program::~Program() {
-    for (Student* s : students_) delete s;
-    for (Course* c : courses_) delete c;
+    //Only delete memory if loaded from file
+    if(owns_memory_) {
+        for (Student* s : students_) delete s;
+        for (Course* c : courses_) delete c;
+    }
     std::cout << "Program object has been destroyed." << std::endl;
 }

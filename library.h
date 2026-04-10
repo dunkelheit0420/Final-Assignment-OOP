@@ -63,6 +63,7 @@ private:
     std::string program_name_;
     std::vector<Student*> students_;
     std::vector<Course*> courses_;
+    bool owns_memory_;
 public:
     Program(const std::string& name);
     void add_student(Student& student);
