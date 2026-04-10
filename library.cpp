@@ -14,6 +14,13 @@ Person::~Person() {
     std::cout << full_name_ << " is deleted." << std::endl;
 }
 
+//Helper function to output the gender string
+std::string genderToStr(gender g){
+    if(g == male) return "male";
+    if(g == female) return "female";
+    return "other";
+}
+
 void Person::display() const {
     std::cout << full_name_ << ", " << birthday_ << ", " << genderToStr(gender_);
 }
@@ -22,12 +29,6 @@ std::string Person::name() const {
     return full_name_;
 }
 
-//Helper function to output the gender string
-std::string genderToStr(gender g){
-    if(g == male) return "male";
-    if(g == female) return "female";
-    return "other";
-}
 
 //Student class functions implementation
 Student::Student() : Person(), gpa_(0.0) {}
