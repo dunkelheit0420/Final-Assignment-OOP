@@ -15,13 +15,18 @@ Person::~Person() {
 }
 
 void Person::display() const {
-    std::cout << full_name_ << ", " << birthday_ << ", " << gender_;
+    std::cout << full_name_ << ", " << birthday_ << ", " << genderToStr(gender_);
 }
 
 std::string Person::name() const {
     return full_name_;
 }
 
+std::string genderToStr(gender g){
+    if(g == male) return "male";
+    if(g == female) return "female";
+    return "other";
+}
 
 //Student class functions implementation
 Student::Student() : Person(), gpa_(0.0) {}
@@ -41,12 +46,12 @@ void Student::display() const {
 }
 
 std::string Student::name() const{
-    return Person::name();
+    return full_name_;
 }
 
 void Student::add_course(Course& course){
     //check if the student is already enrolled in the course:
-    for (int i = 0; i < courses_.size(); i++) {
+    for (size_t i = 0; i < courses_.size(); i++) {
         if(&course == courses_[i]) {
             throw std::string("Student already enrolled in the course");
         }
@@ -84,7 +89,7 @@ std::string Course::code() const {
 
 void Course::add_student(Student& student) {
     //check if the course is enrolling duplicate students:
-    for (int i = 0; i < students_.size(); i++) {
+    for (size_t i = 0; i < students_.size(); i++) {
         if(&student == students_[i]) {
             throw std::string("Student already enrolled in the course");
         }
@@ -120,20 +125,19 @@ void Program::honours_list() const {
     std::vector<Student*> honoured;
 
     std::copy_if(students_.begin(), students_.end(), std::back_inserter(honoured),
-        [](const Student& s) {
-            return s.gpa_ > 3.5;
+        [](const Student* s) {
+            return s->gpa_ > 3.5;
         });
 
     std::sort(honoured.begin(), honoured.end(),
-        [](const Student& a, const Student& b) {
-            return a.gpa_ > b.gpa_;
+        [](const Student* a, const Student* b) {
+            return a->gpa_ > b->gpa_;
         });
 
     std::cout << "=== Honours List for " << program_name_ << " ===" << std::endl;
 
-    std::for_each(honoured.begin(), honoured.end(), [](const Student& s) {
-        std::cout << "  " << s.name() << " - GPA: " << s.gpa_ << std::endl;
-        });
+    std::for_each(honoured.begin(), honoured.end(), [](const Student* s) {
+        s->display(); });
 }
 
 void Program::save_to_file(const std::string& filename) const {
@@ -154,11 +158,10 @@ void Program::save_to_file(const std::string& filename) const {
 
         outfile << students_.size() << std::endl;
         for (const Student* s : students_) {
-            outfile << s->full_name_ << "," << s->birthday_ << "," << s->gender_ << "," << s->gpa_ << "," ;
-            for(int i = 0; i < s->courses_.size() - 1; i++) {
-                outfile << s->courses_[i]->code() << ", ";
+            outfile << s->full_name_ << "," << s->birthday_ << "," << s->gender_ << "," << s->gpa_;
+            for(int i = 0; i < s->courses_.size(); i++) {
+                outfile << "," << s->courses_[i]->code();
             }
-            outfile << s->courses_[s->courses_.size() - 1]->code();
         }
 
         outfile.close();
@@ -224,5 +227,7 @@ void Program::load_from_file(const std::string& filename) {
 }
 
 Program::~Program() {
+    for (Student* s : students_) delete s;
+    for (Course* c : courses_) delete c;
     std::cout << "Program object has been destroyed." << std::endl;
 }
